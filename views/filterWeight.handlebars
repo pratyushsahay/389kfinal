@@ -1,0 +1,12 @@
+<h1>Players heavier than {{input}}lbs:</h1>
+<div class="container">
+    {{#each data}}
+    <div class="content" onclick="location.href='/api/getPlayer/{{this.name}}'">
+        <div class="inner">
+            <img src={{this.img}}  style= "border-radius:50%" "width=40%">
+            <h2 class="name">{{this.name}}</h2>
+            <h2 class="weight">{{this.weight}}</h2>
+        </div>
+    </div>
+    {{/each}}
+</div>

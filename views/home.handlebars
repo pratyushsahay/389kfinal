@@ -1,0 +1,53 @@
+<div class="wrap">
+   <div class="search">
+      <input class="autocomplete" type="text" id="autocomplete-input" placeholder="Search Player" onkeyup="myFunction()"/>
+        <i class="fa fa-search"></i>
+     </button>
+   </div>
+</div>
+
+<ul id="myUL">
+    <div class="container">
+        {{#each data}}
+            <li>
+                <div class="content" onclick="location.href='/api/getPlayer/{{this.name}}'">
+                    <img src={{this.img}}  style= "border-radius:50%" "width=40%">
+                    <h2 id="player" class="name">{{this.name}}</h2>
+                </div>
+            </li>
+        {{/each}}
+        <h2 id="none"></h2>
+        <div class="content" onclick="location.href='/addPlayer'">
+            <img src="https://static.thenounproject.com/png/899559-200.png"  style= "border-radius:50%" "width=40%">
+        </div>
+    </div>
+</ul>
+
+<script>
+function myFunction() {
+    var input, filter, ul, li, a, i, txtValue;
+    input = document.getElementById("autocomplete-input");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myUL");
+    li = ul.getElementsByTagName("li");
+    var count = li.length;
+    document.getElementById("none").innerHTML = "";
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        txtValue = li[i].textContent || li[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1 || filter === "") {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+            count--;
+        }
+
+        console.log(count);
+        if (count <= 0) {
+            document.getElementById("none").innerHTML = "No Matches.";
+            count=li.length;
+        }
+        
+    }
+}
+</script> 
