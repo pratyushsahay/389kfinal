@@ -1,6 +1,6 @@
 <h1 class="heading">Enter New Player</h1>
 <article>
-    <form method="POST" action="/addPlayer">
+    <form method="POST" action="/addPlayer" enctype="multipart/form-data">
         <div class="input-field">
             <label>Name:</label>
             <input type="text" name="name" size="50" placeholder="Enter Player Name">
@@ -37,7 +37,10 @@
             <label>Image:</label>
             <input type="text" name="img" size="50" placeholder="Enter Image URL">
         </div>
-
+        <div class="input-field">
+            <label>Upload image:</label>
+            <input type="file" name="image" alt="Submit">
+        </div>
         <button type="submit">Submit</button>
     </form>
 </article>

@@ -11,7 +11,8 @@
         {{#each data}}
             <li>
                 <div class="content" onclick="location.href='/api/getPlayer/{{this.name}}'">
-                    <img src={{this.img}}  style= "border-radius:50%" "width=40%">
+                    <img src="/public/{{this.image}}"  alt="" style= "border-radius:50%" width="275px"/>
+                    <img src={{this.img}} onerror="this.src=''" alt="" style= "border-radius:50%" "width=40%">
                     <h2 id="player" class="name">{{this.name}}</h2>
                 </div>
             </li>

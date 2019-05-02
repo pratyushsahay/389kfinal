@@ -12,6 +12,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 app.use('/public', express.static('public'));
+const multer = require('multer'); // use for saving images
+var upload = multer({ dest: 'public' }) // this is where each image will be stored
+
 
 // My Variables
 var fs = require('fs');
@@ -56,11 +59,16 @@ app.get("/addPlayer", function(req, res) {
 //************************* */
 // ADD PLAYER VIA HTML FORM
 //************************* */
-app.post('/addPlayer', function(req, res) {
+app.post('/addPlayer',upload.single('image'), function(req, res) {
   if(!req.body) { return res.send("No data recieved"); }
   var body = req.body;
+    console.log(req.file)
+   // console.log(req.file.filename)
 
-  // Transform teams
+    if(req.file) body.image = req.file.filename; //
+
+
+    // Transform teams
   body.teams = body.teams.split(" ");
 
   // Save new player
