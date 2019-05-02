@@ -2,7 +2,9 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
 var exphbs = require('express-handlebars');
+var NBAcolor = require('nba-color')
 
+console.log(NBAcolor.getMainColor('CLE'));
 var app = express();
 
 // MIDDLEWARE
@@ -62,11 +64,13 @@ app.get("/addPlayer", function(req, res) {
 app.post('/addPlayer',upload.single('image'), function(req, res) {
   if(!req.body) { return res.send("No data recieved"); }
   var body = req.body;
-    console.log(req.file)
+    console.log(body)
    // console.log(req.file.filename)
 
-    if(req.file) body.image = req.file.filename; //
-
+    if(req.file) body.image = req.file.filename; // add hex representing image name
+    console.log(body.team);
+    body.team = NBAcolor.getMainColor(body.team + ""); //get teams color
+    console.log(body.team);
 
     // Transform teams
   body.teams = body.teams.split(" ");
