@@ -23,7 +23,11 @@
         </div>
     </div>
 </ul>
-
+<h1> Trash Talk Board </h1>
+<ul id="messages"></ul>
+<form id="box" action="">
+    <input id="m" autocomplete="off" placeholder="leave a live comment" /><button>Send</button>
+</form>
 <script>
 function myFunction() {
     var input, filter, ul, li, a, i, txtValue;
@@ -48,7 +52,7 @@ function myFunction() {
             document.getElementById("none").innerHTML = "No Matches.";
             count=li.length;
         }
-        
+
     }
 }
-</script> 
+</script>

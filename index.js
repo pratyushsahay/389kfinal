@@ -25,6 +25,8 @@ var _DATA = dataUtil.loadData().players;
 var handlebars = exphbs.handlebars;
 var _ = require("underscore");
 const { parse } = require('querystring');
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 /* Add whatever endpoints you need! Remember that your API endpoints must
  * have '/api' prepended to them. Please remember that you need at least 5
@@ -244,7 +246,15 @@ app.post("/heaviest", function(req, res) {
   });
 });
 
+// open socket connection
+io.on('connection', function(socket) {
+    console.log('NEW connection.');
+    socket.on('chat message', function(msg){
+        io.emit('chat message', msg);
+        console.log('Oops. A user disconnected.');
+    });
+});
 
-app.listen(process.env.PORT || 3000, function() {
+http.listen(process.env.PORT || 3000, function() {
   console.log('Listening!');
 });

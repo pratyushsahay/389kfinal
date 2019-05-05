@@ -18,6 +18,7 @@
         "nba-color": "^1.4.0",
         "nba-scoreboard": "^0.1.2",
         "request": "^2.88.0",
+        "socket.io": "^2.2.0",
         "underscore": "^1.9.1"
     }
 }
