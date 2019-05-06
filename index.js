@@ -4,6 +4,13 @@ var logger = require('morgan');
 var exphbs = require('express-handlebars');
 var NBAcolor = require('nba-color')
 
+ //******************* */
+ //   2 MODULES
+ //******************* */
+var alphabeticalSorter = require("./alphabeticalSorter")
+var tallestSorter = require("./tallestSorter")
+
+
 console.log(NBAcolor.getMainColor('CLE'));
 var app = express();
 
@@ -184,18 +191,9 @@ app.post("/tallest", function(req, res) {
   var tallest = [];
   var tallestFeet = req.body.feet;
   var tallestInches = req.body.inches;
-  
-  _.each(_DATA, function(value) {
-    var arr = value.height.split("\'");
-    if(parseInt(arr[0]) > parseInt(tallestFeet)) {
-        tallest.push({"name":value.name,"height":value.height,"img":value.img});
-    } else if(parseInt(arr[0]) === parseInt(tallestFeet)) {
-        if(parseInt(arr[1]) > parseInt(tallestInches)) {
-          tallest.push({"name":value.name,"height":value.height,"img":value.img});
-        }
-    }
-  })
 
+  tallest = tallestSorter(_DATA, tallestFeet, tallestInches)
+  
   var send = tallestFeet + "'" + tallestInches + "\"";
   res.render('filterTallest',{
     data: tallest,
@@ -210,16 +208,8 @@ app.get("/alphabetical", function(req, res) {
     arr.push({"name":value.name,"img":value.img});
   })
 
-  var len = arr.length;
-  for (let x = len-1; x >= 0; x--) {
-    for (let y = 1; y <= x; y++) {
-      if (arr[y-1].name > arr[y].name){
-        var temp = arr[y-1];
-        arr[y-1] = arr[y];
-        arr[y] = temp;
-      }
-    }
-  }
+  arr = alphabeticalSorter(arr)
+
 
   res.render('alphabetical',{
     data:arr

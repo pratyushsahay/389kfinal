@@ -15,6 +15,7 @@
         "express": "^4.15.2",
         "express-handlebars": "^3.0.0",
         "morgan": "^1.8.1",
+        "multer": "^1.4.1",
         "nba-color": "^1.4.0",
         "nba-scoreboard": "^0.1.2",
         "request": "^2.88.0",
