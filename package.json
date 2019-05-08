@@ -12,8 +12,10 @@
     "license": "ISC",
     "dependencies": {
         "body-parser": "^1.17.1",
+        "dotenv": "^8.0.0",
         "express": "^4.15.2",
         "express-handlebars": "^3.0.0",
+        "mongoose": "^5.5.6",
         "morgan": "^1.8.1",
         "multer": "^1.4.1",
         "nba-color": "^1.4.0",
