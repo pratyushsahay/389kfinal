@@ -3,6 +3,17 @@ var bodyParser = require('body-parser');
 var logger = require('morgan');
 var exphbs = require('express-handlebars');
 var NBAcolor = require('nba-color')
+var mongoose = require('mongoose');
+var dotenv = require('dotenv').config();
+var Player = require('./models/Player');
+
+// Connect to MongoDB
+console.log(process.env.MONGODB)
+mongoose.connect(process.env.MONGODB);
+mongoose.connection.on('error', function() {
+    console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+    process.exit(1);
+});
 
  //******************* */
  //   2 MODULES
@@ -10,8 +21,6 @@ var NBAcolor = require('nba-color')
 var alphabeticalSorter = require("./alphabeticalSorter")
 var tallestSorter = require("./tallestSorter")
 
-
-console.log(NBAcolor.getMainColor('CLE'));
 var app = express();
 
 // MIDDLEWARE
@@ -44,20 +53,22 @@ var io = require('socket.io')(http);
  // RENDERS HOME PAGE
  //******************* */
 app.get('/',function(req,res){
-  res.render('home',{
-    data: _DATA
-  });
+  Player.find({}, function(err,players) {
+    if (err) throw err;
+    res.render('home', {
+      data: players
+    })
+  })
 })
 
 //**************** */
 // API GET REQUEST
 //**************** */
 app.get('/api/getPlayers',function(req,res){
-  var players = [];
-  _.each(_DATA, function(value) {
-        players.push(value);
-})
-  res.json(players);
+  Player.find({},function(err, players){
+    if(err) throw err
+    res.send(players)
+  })
 })
 
 /***************************** */
@@ -73,20 +84,37 @@ app.get("/addPlayer", function(req, res) {
 app.post('/addPlayer',upload.single('image'), function(req, res) {
   if(!req.body) { return res.send("No data recieved"); }
   var body = req.body;
-    console.log(body)
+    // console.log(body)
    // console.log(req.file.filename)
 
     if(req.file) body.image = req.file.filename; // add hex representing image name
-    console.log(body.team);
+    // console.log(body.team);
     body.team = NBAcolor.getMainColor(body.team + ""); //get teams color
-    console.log(body.team);
+    // console.log(body.team);
 
     // Transform teams
   body.teams = body.teams.split(" ");
 
   // Save new player
-  _DATA.push(req.body);
-  dataUtil.saveData(_DATA);
+  // _DATA.push(req.body);
+  // dataUtil.saveData(_DATA);
+
+  var player = new Player({
+    name: req.body.name,
+    age: parseInt(req.body.age),
+    teams: req.body.teams,
+    championships: parseInt(req.body.chmps),
+    retired: req.body.retired,
+    height: req.body.height,
+    position: req.body.position,
+    weight: req.body.weight,
+    img: req.body.img
+
+  });
+
+  player.save(function(err) {
+    if(err) throw err
+});
 
   res.redirect("/");
 });
@@ -132,35 +160,48 @@ app.post('/api/addPlayer', function(req, res) {
 // GET A PLAYER WITH NAME AS PARAMETER
 // ************************************ */
 app.get("/api/getPlayer/:player_name", function(req, res) {
-  var _name = req.params.player_name;
-  var result = _.findWhere(_DATA, { name: _name })
-
-  res.render('player',{
-    data: result
+  console.log(req.params.player_name);
+ Player.findOne({name: req.params.player_name}, function(err,player){
+    if (err) throw err;
+  console.log(player);
+    res.render('player',{
+      data: player
+    });
   });
 });
 
 
 app.get("/teams", function(req, res) {
-  res.render('teams',{
-    data: _DATA
-  });
+  // res.render('teams',{
+  //   data: _DATA
+  // });
+
+  Player.find({},function(err, players){
+    if(err) throw err
+    res.render('teams',{
+      data: players
+    });
+  })
 });
 
 app.post("/teams", function(req, res) {
   var input = req.body.teamName;
   var players = [];
   
-  _.each(_DATA, function(value) {
-    if(value.teams.includes(input)) {
-        players.push(value);
-    }
+  // _.each(_DATA, function(value) {
+  //   if(value.teams.includes(input)) {
+  //       players.push(value);
+  //   }
+  // })
+
+  Player.find({teams:input},function(err, players){
+    if(err) throw err
+    res.render('teamSearch',{
+      data: players,
+      input: input
+    });
   })
-  
-  res.render('teamSearch',{
-    input: input,
-    data: players
-  });
+
 });
 
 app.get("/oldest", function(req, res) {
@@ -171,16 +212,24 @@ app.post("/oldest", function(req, res) {
   var oldest = [];
   var oldestAge = parseInt(req.body.oldest);
   
-  _.each(_DATA, function(value) {
-    if(value.age > oldestAge) {
-      oldest.push({"name":value.name,"age":value.age,"img":value.img});
-    }
+  // _.each(_DATA, function(value) {
+  //   if(value.age > oldestAge) {
+  //     oldest.push({"name":value.name,"age":value.age,"img":value.img});
+  //   }
+  // })
+
+  Player.find({age: {$gt: oldestAge}},function(err, players){
+    if(err) throw err
+    res.render('filterAge',{
+      data: players,
+      input: oldestAge
+    });
   })
 
-  res.render('filterAge',{
-    data: oldest,
-    input: oldestAge
-  });
+  // res.render('filterAge',{
+  //   data: oldest,
+  //   input: oldestAge
+  // });
 });
 
 app.get("/tallest", function(req, res) {
@@ -192,28 +241,37 @@ app.post("/tallest", function(req, res) {
   var tallestFeet = req.body.feet;
   var tallestInches = req.body.inches;
 
-  tallest = tallestSorter(_DATA, tallestFeet, tallestInches)
+  // tallest = tallestSorter(_DATA, tallestFeet, tallestInches)
+
+  Player.find({},function(err, players){
+    if(err) throw err
+    tallest = tallestSorter(players, tallestFeet, tallestInches);
+    var send = tallestFeet + "'" + tallestInches + "\"";
+    res.render('filterTallest',{
+      data: tallest,
+      input: send
+    });
+  })
   
-  var send = tallestFeet + "'" + tallestInches + "\"";
-  res.render('filterTallest',{
-    data: tallest,
-    input: send
-  });
 });
 
 app.get("/alphabetical", function(req, res) {
   var arr = [];
 
-  _.each(_DATA, function(value) {
-    arr.push({"name":value.name,"img":value.img});
+  // _.each(_DATA, function(value) {
+  //   arr.push({"name":value.name,"img":value.img});
+  // })
+
+  Player.find({},function(err, players){
+    if(err) throw err
+    _.each(players, function(value) {
+      arr.push({"name":value.name,"img":value.img});
+    })
+    arr = alphabeticalSorter(arr)
+    res.render('alphabetical',{
+      data:arr
+    });
   })
-
-  arr = alphabeticalSorter(arr)
-
-
-  res.render('alphabetical',{
-    data:arr
-  });
 });
 
 app.get("/heaviest", function(req, res) {
@@ -224,16 +282,24 @@ app.post("/heaviest", function(req, res) {
   var heaviest = [];
   var weightLimit = parseInt(req.body.heaviest);
   
-  _.each(_DATA, function(value) {
-    if(value.weight > weightLimit) {
-      heaviest.push({"name":value.name,"weight":value.weight,"img":value.img});
-    }
+  // _.each(_DATA, function(value) {
+  //   if(value.weight > weightLimit) {
+  //     heaviest.push({"name":value.name,"weight":value.weight,"img":value.img});
+  //   }
+  // })
+
+  Player.find({weight: {$gt: weightLimit}},function(err, players){
+    if(err) throw err
+    res.render('filterWeight',{
+      data: players,
+      input: weightLimit
+    });
   })
 
-  res.render('filterWeight',{
-    data: heaviest,
-    input: weightLimit
-  });
+  // res.render('filterWeight',{
+  //   data: heaviest,
+  //   input: weightLimit
+  // });
 });
 
 // open socket connection

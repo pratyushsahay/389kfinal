@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
 
 var playerSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
     age: {
         type: Number,
         min: 0,
@@ -10,7 +14,7 @@ var playerSchema = new mongoose.Schema({
     championships: {
         type: Number,
         min: 0,
-        required = true
+        required: true
     },
     retired: {
         type: String,

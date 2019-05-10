@@ -3,7 +3,7 @@ var _ = require("underscore");
 function tallestSorter(_DATA, tallestFeet, tallestInches){
 
 	var tallest = []
-
+  // console.log(_DATA);
 	_.each(_DATA, function(value){
 		var arr = value.height.split("\'");
     if(parseInt(arr[0]) > parseInt(tallestFeet)) {
@@ -15,7 +15,6 @@ function tallestSorter(_DATA, tallestFeet, tallestInches){
     }
 
 	})
-
 	return tallest
 	
 }
