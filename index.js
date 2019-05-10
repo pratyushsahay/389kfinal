@@ -61,6 +61,10 @@ app.get('/',function(req,res){
   })
 })
 
+app.get('/about',function(req,res){
+    res.render('about')
+})
+
 //**************** */
 // API GET REQUEST
 //**************** */
@@ -98,10 +102,25 @@ app.post('/addPlayer',upload.single('image'), function(req, res) {
   // Save new player
   // _DATA.push(req.body);
   // dataUtil.saveData(_DATA);
+  console.log(req.body);
+  var teamInfo = {
+    name: req.body.teamname,
+    city: req.body.teamcity,
+    color: req.body.team
+  }
+
+  var statInfo = {
+    playerName: req.body.name,
+    ppg: req.body.ppg,
+    rpg: req.body.rpg,
+    apg: req.body.apg
+  }
 
   var player = new Player({
     name: req.body.name,
     age: parseInt(req.body.age),
+    currTeam: teamInfo,
+    stats: statInfo,
     teams: req.body.teams,
     championships: parseInt(req.body.chmps),
     retired: req.body.retired,
@@ -160,10 +179,10 @@ app.post('/api/addPlayer', function(req, res) {
 // GET A PLAYER WITH NAME AS PARAMETER
 // ************************************ */
 app.get("/api/getPlayer/:player_name", function(req, res) {
-  console.log(req.params.player_name);
+  
  Player.findOne({name: req.params.player_name}, function(err,player){
     if (err) throw err;
-  console.log(player);
+  
     res.render('player',{
       data: player
     });

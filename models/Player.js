@@ -1,5 +1,40 @@
 var mongoose = require('mongoose');
 
+var statSchema = new mongoose.Schema({
+    playerName: {
+        type: String,
+        required: true
+    },
+    ppg: {
+        type: Number,
+        required: true
+    },
+    rpg: {
+        type: Number,
+        required: true
+    },
+    apg: {
+        type: Number,
+        required: true
+    }
+
+});
+
+var teamSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    color: {
+        type: Object,
+        required: true
+    }
+});
+
 var playerSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -11,6 +46,7 @@ var playerSchema = new mongoose.Schema({
         required: true
     },
     teams: [String],
+    currTeam: teamSchema,
     championships: {
         type: Number,
         min: 0,
@@ -33,6 +69,7 @@ var playerSchema = new mongoose.Schema({
         min: 0,
         required: true
     },
+    stats: statSchema,
     img: {
         type: String,
         required: true

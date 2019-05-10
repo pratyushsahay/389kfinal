@@ -1,16 +1,20 @@
 <div class="container">
-    <div class="content" style="background-color: {{data.team.hex}}">
+    <div class="content" style="background-color: {{data.currTeam.color.hex}}">
         <div class="inner">
             <img src="/public/{{this.image}}"  alt="" style= "border-radius:50%" width="275px"/>
             <img src={{data.img}} onerror="this.src=''" alt="" style= "border-radius:50%" "width=40%">
             <h2 class="name1">Name: {{data.name}}</h2>
             <h2 class="age">Age: {{data.age}}</h2>
-            <h2 class="teams">Teams: {{data.teams}}</h2>
+            <h2 class="team">Current Team: {{data.currTeam.city}} {{data.currTeam.name}}</h2>
+            <h2 class="teams">All Teams: {{data.teams}}</h2>
             <h2 class="champs">Championships: {{data.championships}}</h2>
             <h2 class="retired">Retired: {{data.retired}}</h2>
             <h2 class="height">Height: {{data.height}}</h2>
             <h2 class="position">Position: {{data.position}}</h2>
             <h2 class="weight">Weight: {{data.weight}}</h2>
+            <h2 class="stats">Points Per Game: {{data.stats.ppg}}</h2>
+            <h2 class="stats">Rebounds Per Game: {{data.stats.rpg}}</h2>
+            <h2 class="stats">Assists Per Game: {{data.stats.apg}}</h2>
         </div>
     </div>
 </div>
